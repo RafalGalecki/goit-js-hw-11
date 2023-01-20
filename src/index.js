@@ -17,16 +17,8 @@ let q;
 let page = 1;
 let per_page = 40;
 
-// data.config.params.
-// let myParams = {
-//   key: '32900426-a12efdc1668c6b000f20a1416',
-//   q,
-//   image_type: 'photo',
-//   orientation: 'horizontal',
-//   safesearch: true,
-//   page,
-//   per_page,
-// };
+loadMoreBtn.classList.add('hidden');
+let isVisible = false;
 
 let whichTurn = 1;
 
@@ -39,20 +31,11 @@ let comments;
 let downloads;
 //let totalHits;
 
-//const lightbox1 = $('.lighbox-1 a').simpleLightbox();
-
-// data.hits.webformatURL;
-// data.hits.largeImageURL;
-// data.hits.tags;
-// data.hits.likes;
-// data.hits.views;
-// data.hits.comments;
-// data.hits.downloads;
-// data.totalHits;
-
+// This listener is to get keyWords
+// and to run fetching engine by pressing submit button
 searchForm.addEventListener('submit', handleSubmit);
-//loadMoreBtn.addEventListener('click', loadMore);
 
+// This handler manages main functions for searchin photos
 function handleSubmit(event) {
   event.preventDefault();
   getKeyWords();
@@ -60,14 +43,20 @@ function handleSubmit(event) {
   fetchPhotos();
 }
 
-// function loadMore(totalHits) {
-//   let totalPages = totalHits / per_page;
-//   if (page < totalPages) {
-//     console.log('Which page for load more is:', page);
-//     fetchPhotos();
-//   }
-// }
+// This function makes the 'Load More' button visible
+// listening to user's click
+// to fetch and render more photos of the same search criteria
+function loadMore(totalHits) {
+  let totalPages = totalHits / per_page;
 
+  if (totalPages > page) {
+    loadMoreBtn.classList.remove('hidden');
+    console.log('totalPage is:', totalPages, 'Page is:', page);
+    loadMoreBtn.addEventListener('click', fetchPhotos);
+  }
+}
+
+// This function get keywords from input for search criteria
 function getKeyWords() {
   Array.from(searchForm.elements).forEach(el => {
     if (el.name === 'searchQuery') {
@@ -80,7 +69,6 @@ function getKeyWords() {
 }
 // MAIN ASYNC/AWAIT FETCH FUNCTION using AXIOS
 async function fetchPhotos() {
-    
   try {
     const response = await axios.get('https://pixabay.com/api/', {
       params: {
@@ -94,34 +82,25 @@ async function fetchPhotos() {
       },
     });
     successAlert(page, response.data.totalHits);
-    page += 1;
-    
-    console.log('page po dodaniu:', typeof page, page);
-    //loadMore(response.data.totalHits);
+
     noPhotosMatching(response.data.totalHits);
     allPagesLoaded(response.data.totalHits);
     renderSinglePhotoCard(response.data);
 
-    console.log('full response --------', response);
+    page += 1;
+
+    console.log('page po dodaniu:', typeof page, page);
+    loadMore(response.data.totalHits);
+
+    //console.log('full response --------', response);
   } catch (error) {
     console.error(error);
   }
 }
 
-// it appears when there is no matching photos 
-function noPhotosMatching(matching) {
-  if (matching === 0) {
-    Notiflix.Notify.failure(
-      'Sorry, there are no images matching your search query. Please try again.'
-    );
-  }
-}
-
-
 //render photo card for each photo fetched
 // and start simpleLightbox gallery
 function renderSinglePhotoCard(data) {
-
   data.hits.forEach(el => {
     const photoCardDiv = document.createElement('div');
     photoCardDiv.classList.add('photo-card');
@@ -151,7 +130,8 @@ function renderSinglePhotoCard(data) {
   });
 }
 
-//render some features of each photo beneath of it
+//render photo label
+//- some informations of each photo beneath of it
 function renderInfos(data, element) {
   let infoData = {
     Likes: data.likes,
@@ -160,7 +140,7 @@ function renderInfos(data, element) {
     Downloads: data.downloads,
   };
   const keys = Object.keys(infoData);
-  
+
   for (const info of keys) {
     const infoParagraph = document.createElement('p');
     infoParagraph.classList.add('info-item');
@@ -176,31 +156,45 @@ function renderInfos(data, element) {
   }
 }
 
-// refreshing rendered photos
-// This function remove gallery items
+// Refresh rendered photos and reset page value to 1
+// by removing html gallery child elements created
 function refreshRendering() {
   elementToRemove = document.querySelectorAll('.gallery__item');
-
-  if (elementToRemove.length > 1) {
+  if (elementToRemove.length > 0) {
     for (let i = 0; i < elementToRemove.length; i++) {
       elementToRemove[i].remove();
     }
+    page = 1;
   }
 }
-// it appears on the last page of totalHits
+
+// !!! 3 alert notifications using Notiflix:
+
+// This appears on first submit of new keyWords only
+function successAlert(page, totalHits) {
+  if (page === 1) {
+    Notiflix.Notify.success(`Hooray! We found ${totalHits} images`);
+  }
+}
+
+// This appears when there is no matching photos
+function noPhotosMatching(matching) {
+  if (matching === 0) {
+    Notiflix.Notify.failure(
+      'Sorry, there are no images matching your search query. Please try again.'
+    );
+  }
+}
+
+// This appears on the last page of totalHits
 // and hide the loadMore button
 function allPagesLoaded(totalHits) {
   let totalPages = totalHits / per_page;
-  if (page > totalPages) {
+
+  if (page > totalPages && totalPages !== 0) {
     loadMoreBtn.classList.add('hidden');
     Notiflix.Notify.warning(
       "We're sorry, but you've reached the end of search results."
     );
-  }
-}
-// it appears on first submit of new keyWords only
-function successAlert(page, totalHits) {
-  if (page === 1) {
-    Notiflix.Notify.success(`Hooray! We found ${totalHits} images`);
   }
 }
