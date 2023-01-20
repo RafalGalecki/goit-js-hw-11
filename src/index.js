@@ -78,10 +78,9 @@ function getKeyWords() {
     }
   });
 }
-// pierwsza działająca funkcja z axios
+// MAIN ASYNC/AWAIT FETCH FUNCTION using AXIOS
 async function fetchPhotos() {
-  console.log('page przed fetchem', page);
-  //myParams.page += 1;
+    
   try {
     const response = await axios.get('https://pixabay.com/api/', {
       params: {
@@ -96,7 +95,7 @@ async function fetchPhotos() {
     });
     successAlert(page, response.data.totalHits);
     page += 1;
-    //myParams.page += 1;
+    
     console.log('page po dodaniu:', typeof page, page);
     //loadMore(response.data.totalHits);
     noPhotosMatching(response.data.totalHits);
@@ -108,6 +107,8 @@ async function fetchPhotos() {
     console.error(error);
   }
 }
+
+// it appears when there is no matching photos 
 function noPhotosMatching(matching) {
   if (matching === 0) {
     Notiflix.Notify.failure(
@@ -115,18 +116,11 @@ function noPhotosMatching(matching) {
     );
   }
 }
-//druga funkcja fetch axios
-// const fetchPhotos = async () => {
-//   const response = await axios.get('https://pixabay.com/api/', {
-//     params: myParams,
-//   });
-//   const data = await response.json();
-//   return data;
-// };
 
-//first render single photo card function
+
+//render photo card for each photo fetched
+// and start simpleLightbox gallery
 function renderSinglePhotoCard(data) {
-  //refreshRendering();
 
   data.hits.forEach(el => {
     const photoCardDiv = document.createElement('div');
@@ -157,7 +151,7 @@ function renderSinglePhotoCard(data) {
   });
 }
 
-//render infos
+//render some features of each photo beneath of it
 function renderInfos(data, element) {
   let infoData = {
     Likes: data.likes,
@@ -166,32 +160,20 @@ function renderInfos(data, element) {
     Downloads: data.downloads,
   };
   const keys = Object.keys(infoData);
-  //console.log("Obiekt infoData to:", infoData);
-  for (const info of keys)
-   {
-      const infoParagraph = document.createElement('p');
-      infoParagraph.classList.add('info-item');
-      element.appendChild(infoParagraph);
+  
+  for (const info of keys) {
+    const infoParagraph = document.createElement('p');
+    infoParagraph.classList.add('info-item');
+    element.appendChild(infoParagraph);
 
-      const infoLabel = document.createElement('b');
-      infoLabel.textContent = `${info}`;
-      infoParagraph.appendChild(infoLabel);
+    const infoLabel = document.createElement('b');
+    infoLabel.textContent = `${info}`;
+    infoParagraph.appendChild(infoLabel);
 
-      const infoValue = document.createElement('span');
-      infoValue.textContent = infoData[info].toLocaleString('pl-PL');
-      infoParagraph.appendChild(infoValue);
-    
+    const infoValue = document.createElement('span');
+    infoValue.textContent = infoData[info].toLocaleString('pl-PL');
+    infoParagraph.appendChild(infoValue);
   }
-}
-// second rendering function
-function createSimpleGalleryItems(data) {
-  const items = data.hits
-    .map(
-      image =>
-        `<a class="gallery__item" href="${image.largeImageURL}"><img class="gallery__image" src="${image.webformatURL}" alt="${image.tags}"/></a>`
-    )
-    .join('');
-  galleryContainer.insertAdjacentHTML('beforeend', items);
 }
 
 // refreshing rendered photos
@@ -205,7 +187,8 @@ function refreshRendering() {
     }
   }
 }
-
+// it appears on the last page of totalHits
+// and hide the loadMore button
 function allPagesLoaded(totalHits) {
   let totalPages = totalHits / per_page;
   if (page > totalPages) {
@@ -215,7 +198,7 @@ function allPagesLoaded(totalHits) {
     );
   }
 }
-
+// it appears on first submit of new keyWords only
 function successAlert(page, totalHits) {
   if (page === 1) {
     Notiflix.Notify.success(`Hooray! We found ${totalHits} images`);
