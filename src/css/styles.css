@@ -83,7 +83,9 @@ body {
   max-width: 1140px;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   grid-auto-rows: 240px;
-  grid-gap: 12px;
+  /* grid-gap: 12px; */
+  grid-row-gap: 40px;
+  grid-column-gap: 12px;
   justify-content: center;
   margin-left: auto;
   margin-right: auto;
@@ -114,4 +116,21 @@ body {
 
 .gallery__link:hover {
   cursor: zoom-in;
+}
+.info {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.info-item {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  font-size: small;
+  text-align: center;
+  color: grey;
 }
