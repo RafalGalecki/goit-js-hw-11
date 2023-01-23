@@ -11,18 +11,12 @@ const searchBtn = document.querySelector('.search-form__btn');
 const loadMoreBtn = document.querySelector('.load-more');
 const galleryContainer = document.querySelector('.gallery');
 
-const body = document.querySelector('body');
-
-//let elementToRemove = document.querySelectorAll('.gallery__item');
-
 let q;
 let page = 1;
 let per_page = 40;
 
 loadMoreBtn.classList.add('hidden');
 let isVisible = false;
-
-
 
 // This listener is to get keyWords
 // and to run fetching engine by pressing submit button
@@ -42,8 +36,6 @@ function getKeyWords() {
     if (el.name === 'searchQuery') {
       let keyWords = el.value.trim().replaceAll(' ', '+');
       q = keyWords;
-      console.log('q is', q);
-      //console.log('Czy jest q w obiekcie:', myParams);
     }
   });
 }
@@ -64,16 +56,14 @@ async function fetchPhotos() {
       },
     });
     successAlert(page, response.data.totalHits);
-    
+
     noPhotosMatching(response.data.totalHits);
 
     renderSinglePhotoCard(response.data);
 
     loadMore(response.data.totalHits);
-   
+
     allPagesLoaded(response.data.totalHits);
-    console.log('page po dodaniu:', typeof page, page);
-    //console.log('full response --------', response);
   } catch (error) {
     console.error(error);
   }
@@ -90,13 +80,28 @@ function loadMore(totalHits) {
 
     isVisible = true;
     loadMoreBtn.classList.remove('hidden');
-    console.log('totalPage is:', totalPages, 'Page is:', page);
+    // The listener for 'Load More" option
     loadMoreBtn.addEventListener('click', fetchPhotos);
-    //smoothScrolling();
   }
   if (page > totalPages) {
     isVisible = false;
     loadMoreBtn.classList.add('hidden');
+  }
+}
+
+// Smooth scrolling
+// This function works for 'Load More' photos rendered
+function smoothScrolling() {
+  if (isVisible) {
+    console.log('Smooth scrolling');
+    const { height: cardHeight } = document
+      .querySelector('.gallery')
+      .firstElementChild.getBoundingClientRect();
+
+    window.scrollBy({
+      top: cardHeight * 2,
+      behavior: 'smooth',
+    });
   }
 }
 
@@ -126,7 +131,7 @@ function renderSinglePhotoCard(data) {
     photoCardDiv.appendChild(infoDiv);
 
     renderInfos(el, infoDiv);
-    //smoothScrolling();
+    smoothScrolling();
   });
   const gallery = new SimpleLightbox('.gallery a', {
     captionDelay: 2500,
@@ -173,14 +178,14 @@ function refreshRendering() {
 
 // !!! 3 alert notifications using Notiflix:
 
-// This appears on first submit of new keyWords only
+// This info-alert appears on the first submit of new keyWords only
 function successAlert(page, totalHits) {
   if (page === 1 && totalHits > 0) {
     Notiflix.Notify.success(`Hooray! We found ${totalHits} images`);
   }
 }
 
-// This appears when there is no matching photos
+// This info-alert appears when there is no matching photos
 function noPhotosMatching(matching) {
   if (matching === 0) {
     Notiflix.Notify.failure(
@@ -190,7 +195,7 @@ function noPhotosMatching(matching) {
   }
 }
 
-// This appears on the last page of totalHits
+// This info-alert appears on the last page of totalHits
 // and hide the loadMore button
 function allPagesLoaded(totalHits) {
   let totalPages = totalHits / per_page;
@@ -202,24 +207,3 @@ function allPagesLoaded(totalHits) {
     );
   }
 }
-
-// Smooth scrolling
-//body.addEventListener('scroll', smoothScrolling);
-
-function smoothScrolling() {
-  const elementToRemove = document.querySelectorAll('.gallery__item');
-  //const cardHeight;
-  if (elementToRemove.length > 0) {
-    console.log('Smooth scrolling');
-    const { height: cardHeight } = document
-      .querySelector('.gallery')
-      .firstElementChild.getBoundingClientRect();
-
-    window.scrollBy({
-      top: cardHeight * 2,
-      behavior: 'smooth',
-    });
-  }
-}
-
-

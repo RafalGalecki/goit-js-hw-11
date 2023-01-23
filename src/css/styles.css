@@ -87,6 +87,7 @@ body {
   grid-row-gap: 40px;
   grid-column-gap: 12px;
   justify-content: center;
+  margin-top: 50px;
   margin-left: auto;
   margin-right: auto;
 }
