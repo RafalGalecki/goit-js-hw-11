@@ -11,7 +11,9 @@ const searchBtn = document.querySelector('.search-form__btn');
 const loadMoreBtn = document.querySelector('.load-more');
 const galleryContainer = document.querySelector('.gallery');
 
-const infoLabels = ['Likes', 'Views', 'Comments'];
+const body = document.querySelector('body');
+
+//let elementToRemove = document.querySelectorAll('.gallery__item');
 
 let q;
 let page = 1;
@@ -20,40 +22,18 @@ let per_page = 40;
 loadMoreBtn.classList.add('hidden');
 let isVisible = false;
 
-let whichTurn = 1;
 
-let webformatURL;
-let largeImageURL;
-let tags;
-let likes;
-let views;
-let comments;
-let downloads;
-//let totalHits;
 
 // This listener is to get keyWords
 // and to run fetching engine by pressing submit button
 searchForm.addEventListener('submit', handleSubmit);
 
-// This handler manages main functions for searchin photos
+// This handler manages main functions for searching photos
 function handleSubmit(event) {
   event.preventDefault();
   getKeyWords();
   refreshRendering();
   fetchPhotos();
-}
-
-// This function makes the 'Load More' button visible
-// listening to user's click
-// to fetch and render more photos of the same search criteria
-function loadMore(totalHits) {
-  let totalPages = totalHits / per_page;
-
-  if (totalPages > page) {
-    loadMoreBtn.classList.remove('hidden');
-    console.log('totalPage is:', totalPages, 'Page is:', page);
-    loadMoreBtn.addEventListener('click', fetchPhotos);
-  }
 }
 
 // This function get keywords from input for search criteria
@@ -67,7 +47,9 @@ function getKeyWords() {
     }
   });
 }
+// -------------------------------------------
 // MAIN ASYNC/AWAIT FETCH FUNCTION using AXIOS
+// -------------------------------------------
 async function fetchPhotos() {
   try {
     const response = await axios.get('https://pixabay.com/api/', {
@@ -82,19 +64,39 @@ async function fetchPhotos() {
       },
     });
     successAlert(page, response.data.totalHits);
-
+    
     noPhotosMatching(response.data.totalHits);
-    allPagesLoaded(response.data.totalHits);
+
     renderSinglePhotoCard(response.data);
 
-    page += 1;
-
-    console.log('page po dodaniu:', typeof page, page);
     loadMore(response.data.totalHits);
-
+   
+    allPagesLoaded(response.data.totalHits);
+    console.log('page po dodaniu:', typeof page, page);
     //console.log('full response --------', response);
   } catch (error) {
     console.error(error);
+  }
+}
+
+// This function makes the 'Load More' button visible
+// listening to user's click
+// to fetch and render more photos of the same search criteria
+function loadMore(totalHits) {
+  let totalPages = totalHits / per_page;
+
+  if (totalPages > page || page === totalPages) {
+    page += 1;
+
+    isVisible = true;
+    loadMoreBtn.classList.remove('hidden');
+    console.log('totalPage is:', totalPages, 'Page is:', page);
+    loadMoreBtn.addEventListener('click', fetchPhotos);
+    //smoothScrolling();
+  }
+  if (page > totalPages) {
+    isVisible = false;
+    loadMoreBtn.classList.add('hidden');
   }
 }
 
@@ -124,6 +126,7 @@ function renderSinglePhotoCard(data) {
     photoCardDiv.appendChild(infoDiv);
 
     renderInfos(el, infoDiv);
+    //smoothScrolling();
   });
   const gallery = new SimpleLightbox('.gallery a', {
     captionDelay: 2500,
@@ -159,7 +162,7 @@ function renderInfos(data, element) {
 // Refresh rendered photos and reset page value to 1
 // by removing html gallery child elements created
 function refreshRendering() {
-  elementToRemove = document.querySelectorAll('.gallery__item');
+  const elementToRemove = document.querySelectorAll('.gallery__item');
   if (elementToRemove.length > 0) {
     for (let i = 0; i < elementToRemove.length; i++) {
       elementToRemove[i].remove();
@@ -172,7 +175,7 @@ function refreshRendering() {
 
 // This appears on first submit of new keyWords only
 function successAlert(page, totalHits) {
-  if (page === 1) {
+  if (page === 1 && totalHits > 0) {
     Notiflix.Notify.success(`Hooray! We found ${totalHits} images`);
   }
 }
@@ -183,6 +186,7 @@ function noPhotosMatching(matching) {
     Notiflix.Notify.failure(
       'Sorry, there are no images matching your search query. Please try again.'
     );
+    //page = 1;
   }
 }
 
@@ -198,3 +202,24 @@ function allPagesLoaded(totalHits) {
     );
   }
 }
+
+// Smooth scrolling
+//body.addEventListener('scroll', smoothScrolling);
+
+function smoothScrolling() {
+  const elementToRemove = document.querySelectorAll('.gallery__item');
+  //const cardHeight;
+  if (elementToRemove.length > 0) {
+    console.log('Smooth scrolling');
+    const { height: cardHeight } = document
+      .querySelector('.gallery')
+      .firstElementChild.getBoundingClientRect();
+
+    window.scrollBy({
+      top: cardHeight * 2,
+      behavior: 'smooth',
+    });
+  }
+}
+
+
