@@ -181,7 +181,9 @@ function refreshRendering() {
 // This info-alert appears on the first submit of new keyWords only
 function successAlert(page, totalHits) {
   if (page === 1 && totalHits > 0) {
-    Notiflix.Notify.success(`Hooray! We found ${totalHits} images`);
+    Notiflix.Notify.success(`Hooray! We found ${totalHits} images`, {
+      timeout: 3000,
+    });
   }
 }
 
@@ -189,7 +191,10 @@ function successAlert(page, totalHits) {
 function noPhotosMatching(matching) {
   if (matching === 0) {
     Notiflix.Notify.failure(
-      'Sorry, there are no images matching your search query. Please try again.'
+      'Sorry, there are no images matching your search query. Please try again.',
+      {
+        timeout: 3000,
+      }
     );
     //page = 1;
   }
@@ -203,7 +208,10 @@ function allPagesLoaded(totalHits) {
   if (page > totalPages && totalPages !== 0) {
     loadMoreBtn.classList.add('hidden');
     Notiflix.Notify.warning(
-      "We're sorry, but you've reached the end of search results."
+      "We're sorry, but you've reached the end of search results.",
+      {
+        timeout: 3000,
+      }
     );
   }
 }
