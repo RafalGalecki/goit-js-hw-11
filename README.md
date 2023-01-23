@@ -1,3 +1,5 @@
+(https://rafalgalecki.github.io/goit-js-hw-11/)
+
 # Parcel template
 
 Ten projekt został stworzony przy pomocy Parcel. W celu zapoznania się i
