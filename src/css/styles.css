@@ -16,6 +16,13 @@ body {
   margin: 0;
   padding: 15px;
 }
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
 .container {
   justify-content: center;
   min-width: 320px;
@@ -158,13 +165,13 @@ body {
 }
 
 /* Media */
-@media screen and (min-width: 768px) {
+@media screen and (min-width: 480px) {
   .gallery__item {
-    flex-basis: calc((100% - 20px) / 2);
+    flex-basis: calc((100% - 12px) / 2);
   }
 }
 
-@media screen and (min-width: 1200px) {
+@media screen and (min-width: 768px) {
   .gallery__item {
     flex-basis: calc((100% - 12px * 2) / 3);
   }
