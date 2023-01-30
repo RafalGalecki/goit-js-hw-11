@@ -70,6 +70,8 @@ body {
   max-width: 90vw;
 }
 .load-more {
+  display: flex;
+  justify-content: center;
   margin: 40px 0;
   width: 100%;
   height: auto;
