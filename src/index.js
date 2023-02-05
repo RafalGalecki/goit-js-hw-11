@@ -39,6 +39,7 @@ function getKeyWords() {
     }
   });
 }
+
 // -------------------------------------------
 // MAIN ASYNC/AWAIT FETCH FUNCTION using AXIOS
 // -------------------------------------------
@@ -55,6 +56,7 @@ async function fetchPhotos() {
         per_page,
       },
     });
+
     successAlert(page, response.data.totalHits);
 
     noPhotosMatching(response.data.totalHits);
@@ -93,7 +95,6 @@ function loadMore(totalHits) {
 // This function works for 'Load More' photos rendered
 function smoothScrolling() {
   if (isVisible) {
-    console.log('Smooth scrolling');
     const { height: cardHeight } = document
       .querySelector('.gallery')
       .firstElementChild.getBoundingClientRect();
@@ -196,7 +197,6 @@ function noPhotosMatching(matching) {
         timeout: 3000,
       }
     );
-    //page = 1;
   }
 }
 
