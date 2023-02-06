@@ -26,7 +26,7 @@ searchForm.addEventListener('submit', handleSubmit);
 function handleSubmit(event) {
   event.preventDefault();
   getKeyWords();
-  refreshRendering();
+  refreshRendering(); // Remove old gallery on a new search
   fetchPhotos();
 }
 
@@ -57,15 +57,15 @@ async function fetchPhotos() {
       },
     });
 
-    successAlert(page, response.data.totalHits);
+    successAlert(page, response.data.totalHits); // Notiflix alert
 
-    noPhotosMatching(response.data.totalHits);
+    noPhotosMatching(response.data.totalHits); // Notiflix alert
 
-    renderSinglePhotoCard(response.data);
+    renderSinglePhotoCard(response.data); // Photo cards rendering
 
-    loadMore(response.data.totalHits);
+    loadMore(response.data.totalHits); // Button 'Load More'
 
-    allPagesLoaded(response.data.totalHits);
+    allPagesLoaded(response.data.totalHits); // Notiflix alert
   } catch (error) {
     console.error(error);
   }
@@ -135,7 +135,8 @@ function renderSinglePhotoCard(data) {
     smoothScrolling();
   });
   const gallery = new SimpleLightbox('.gallery a', {
-    captionDelay: 2500,
+    captionsData: 'alt',
+    captionDelay: 250,
   });
 }
 
