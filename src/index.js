@@ -75,7 +75,7 @@ async function fetchPhotos() {
 // listening to user's click
 // to fetch and render more photos of the same search criteria
 function loadMore(totalHits) {
-  let totalPages = totalHits / per_page;
+  let totalPages = Math.ceil(totalHits / per_page);
 
   if (totalPages > page || page === totalPages) {
     page += 1;
@@ -88,6 +88,7 @@ function loadMore(totalHits) {
   if (page > totalPages) {
     isVisible = false;
     loadMoreBtn.classList.add('hidden');
+    loadMoreBtn.removeEventListener('click', fetchPhotos);
   }
 }
 
@@ -204,7 +205,7 @@ function noPhotosMatching(matching) {
 // This info-alert appears on the last page of totalHits
 // and hide the loadMore button
 function allPagesLoaded(totalHits) {
-  let totalPages = totalHits / per_page;
+  let totalPages = Math.ceil(totalHits / per_page);
 
   if (page > totalPages && totalPages !== 0) {
     loadMoreBtn.classList.add('hidden');
